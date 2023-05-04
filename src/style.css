@@ -65,8 +65,8 @@ body,
 }
 
 .text-content p {
-	color: white;
-	color: black;
+	/*color: white;*/
+	color: '#000';
 	font-weight: 900;
 	/*padding: 30px;*/
 	font-size: 1.8rem;
