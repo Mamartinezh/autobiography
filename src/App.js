@@ -1,19 +1,23 @@
 
 
-import { Canvas } from '@react-three/fiber'
+import { useState, useRef } from 'react'
 import Scene from './components/Scene'
-import { useState } from 'react'
-import LoadingCube from './components/LoadingCube'
+import { Canvas } from '@react-three/fiber'
 import Blob from './components/Blob'
+import TextEffect from './components/TextEffect'
+import LoadingCube from './components/LoadingCube'
 import { NoToneMapping, LinearEncoding, sRGBEncoding } from 'three'
+import { TextContent, views } from './content-settings'
 
 export default function App() {
 
+	const isChanging = useRef(false)
 	const [ isLoaded, setIsLoaded ] = useState(false)
 	const [ showHint, setShowHint ] = useState(false)
 	const [ hideText, setHideText ] = useState(false)
 	const [ hasClicked, setHasCliked ] = useState(false)
 	const [ currentScene, setCurrentScene ] = useState(0)
+	const [ nViews, setNViews ] = useState(Object.keys(views).length)
 	const [ onLoadText, setOnLoadText ] = useState('¡Welcome to my autobiography!')
 
 	const showText = () => {
@@ -30,16 +34,20 @@ export default function App() {
 		setCurrentScene(1)
 		removeEventListener('click', hideWelcomeText)
 		setTimeout(()=>{
-			addEventListener('click', e=>setCurrentScene(prev=>prev===6?prev:prev+1))
-			addEventListener('contextmenu', e=>{
-				e.preventDefault()
-				setCurrentScene(prev=>prev===0?prev:prev-1)
-			})
+			addEventListener('click', e=>changeScene(e, 1))
+			addEventListener('contextmenu', e=>changeScene(e, -1))
 			setHasCliked(true)
 		}, onLoadText.length * 0.05 * 1000)
 	}
 
-	console.log(currentScene)
+	const changeScene = (e, dt) => {
+		e.preventDefault()
+		if (isChanging.current) return
+		setCurrentScene(prev=>{
+			if (prev + dt >= nViews || prev + dt < 0) return prev
+			return prev + dt
+		})
+	}
 
 	return (
 		<>
@@ -61,29 +69,15 @@ export default function App() {
 					]
 				}}
 			>	
-				<Scene onLoad={showText} current={currentScene} />
+				<Scene 
+					onLoad={showText} 
+					current={currentScene} 
+					isChanging={isChanging} />
 			</Canvas>
 		</div>
 		<LoadingCube isLoaded={isLoaded} />
 		{isLoaded && 
-			onLoadText.split('-').map((fragment, id)=>
-				<div 
-					key={id}
-					style={{'--n': id, '--t': onLoadText.split('-').length}} 
-					className='onload-div'>
-				{fragment.split('').map((letter, idx)=>
-					<span
-						key={idx}
-						style={{
-							'--id': idx,
-							'--total': onLoadText.split('-').slice(0, id).join('').length??0}} 
-						className={`onload-text ${hideText?'reverse':''}`}
-					>
-						{letter}
-					</span>
-				)}
-				</div>
-			)
+			<TextEffect text={onLoadText} hide={hideText}/>
 		}
 		<div className={`click-hint ${showHint?'active':''}`}>
 			Click to continue
@@ -93,13 +87,10 @@ export default function App() {
 			{currentScene>0 &&
 				<>
 				<Blob />
-				<p className={`${currentScene===0?'':'hide'}`}>{content[0]}</p>
-				<p className={`${currentScene===1?'':'hide'}`}>{content[1]}</p>
-				<p className={`${currentScene===2?'':'hide'}`}>{content[2]}</p>
-				<p className={`${currentScene===3?'':'hide'}`}>{content[3]}</p>
-				<p className={`${currentScene===4?'':'hide'}`}>{content[4]}</p>
-				<p className={`${currentScene===5?'':'hide'}`}>{content[5]}</p>
-				<p className={`${currentScene===6?'':'hide'}`}>{content[6]}</p>
+				<Blob />
+				{Object.entries(TextContent).map(([key, text])=>
+					<p key={key} className={`${currentScene==key?'':'hide'}`}>{text}</p>
+				)}
 				</>
 			}
 		</div>
@@ -107,13 +98,3 @@ export default function App() {
 	)
 }
 
-
-const content = {
-	0: '',
-	1: 'I was born on june the 21th in the year 1992 in San Andres. My parents were living there.',
-	2: 'Since I was a child, I always love playing the guitar. My first guitar was given to me when I was 8 years old, it was a fender stratocaster.',
-	3: 'My favourite sport was alwayd tenis; by the year of 2004 I started playing tenis, and reached a competitive level, which lead me to play in municipal tournaments.',
-	4: 'I finished my elementary studies when I was 16 years old, so I decided to continue my studies searching a civil engineering degree. I enrolled the program at the Universidad De Medellin.',
-	5: 'Then, I discovered one of my biggest passions, cyling. At first it was my trasportation media, but very quickly became an hobbie that lead to a lot of happiness.',
-	6: "Recently, I've been very enthusiastic about programming, althought it was always one of my passions, nevertheless, I'm decided to make it my career."
-}

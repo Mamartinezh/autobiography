@@ -1,26 +1,25 @@
 
-import { useFrame, useThree, extend } from '@react-three/fiber'
-import { MeshBasicMaterial, LoopOnce, SRGBColorSpace, DoubleSide, Group } from 'three'
-import { useGLTF, useTexture, useAnimations } from '@react-three/drei'
-import { useRef, useEffect, useState, Suspense, primitive } from 'react'
-import { useClientContext } from '../contexts/client/ClientState'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-
 import gsap from 'gsap'
+import { useFrame, useThree, extend } from '@react-three/fiber'
+import { useClientContext } from '../contexts/client/ClientState'
+import { useGLTF, useTexture, useAnimations } from '@react-three/drei'
+import { useRef, useEffect, useState, Suspense, primitive, useMemo } from 'react'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { MeshBasicMaterial, LoopOnce, SRGBColorSpace, DoubleSide, Group, CanvasTexture } from 'three'
 
-import Ambulance from './Ambulance'
-import Guitar from './Guitar'
-import Tenis from './Tenis'
-import Bulldozer from './Bulldozer'
-import Bicycle from './Bicycle'
-import Computer from './Computer'
+import CustomModel from './CustomModel'
+import MatrixCanvas from '../utils/matrix-canvas'
+import { views, viewsSmall, models } from '../content-settings'
 
 extend({ OrbitControls })
 
-export default function Scene({onLoad, current}) {
+let Models = models
+
+
+export default function Scene({onLoad, current, isChanging}) {
 
 	const control = useRef()
-	const sceneY0 = useRef(-3)
+	const sceneY0 = useRef(-5)
 	const elapsed = useRef(0)
 	const mainGroup = useRef()
 	const { camera, gl } = useThree()
@@ -29,7 +28,8 @@ export default function Scene({onLoad, current}) {
 	useFrame((state, delta)=>{
 		control.current.update()
 	    if (cursorSettings.isOn) {
-	        // mainGroup.current.position.x += cursor.current.left * cursorSettings.damping * 5
+	        mainGroup.current.position.x += cursor.current.left * cursorSettings.damping * 5
+	        mainGroup.current.position.z += cursor.current.left * cursorSettings.damping * 5
 	        cursor.current.left += - cursor.current.left * cursorSettings.damping
 	    	cursor.current.offset = cursor.current.x * cursorSettings.delta - cursor.current.left
 	    }
@@ -39,6 +39,32 @@ export default function Scene({onLoad, current}) {
 		mainGroup.current.position.y = sceneY0.current + Math.sin(elapsed.current) * 0.05
 
 	})
+
+	useMemo(()=>{
+
+		// Matrix Texture
+		const matrixCanvas = new MatrixCanvas()
+		const matrixTexture = new CanvasTexture(matrixCanvas.matrixCanvas)
+		matrixCanvas.texture = matrixTexture
+
+		const blackMaterial = new MeshBasicMaterial({color: '#13120f'})
+		const matrixMaterial = new MeshBasicMaterial({map: matrixTexture})
+
+		Object.keys(Models).forEach(key=>{
+			Models[key].materials = {'justBlack': blackMaterial}
+		})
+
+		Models = {
+			...Models,
+			6: {
+				...Models[6],
+				materials: {
+					'Screen': matrixMaterial
+				}
+			}
+		}
+	}, [])
+
 
 	const [ bakedMap ] = useTexture(
 		[
@@ -81,6 +107,8 @@ export default function Scene({onLoad, current}) {
 		if (!zoom) return
 		camera.zoom = zoom
 		let factor = sizes.current.height / (sizes.current.height - 210) 
+		if (sizes.current.width>1100) sceneY0.current = -4
+		else sceneY0.current = -3
 		// sceneY0.current = - 300 * 0.5 * factor * 12.6357 / (sizes.current.height * 16 / Math.sqrt(16**2+2**2))
 		camera.updateProjectionMatrix()
 	}, [sizes.current])
@@ -107,8 +135,8 @@ export default function Scene({onLoad, current}) {
 			ease: 'power2.inOut'
 		})
 		gsap.to(mainGroup.current.position, {
-				x: views[current].sx,
-				z: views[current].sz,
+				x: sizes.current.width>1100?views[current].sx:viewsSmall[current].sx,
+				z: sizes.current.width>1100?views[current].sz:viewsSmall[current].sz,
 				duration: 2, 
 				ease: 'power2.inOut'
 		})
@@ -122,65 +150,17 @@ export default function Scene({onLoad, current}) {
 				<Suspense>
 					<primitive object={land.scene} />
 				</Suspense>
-				<Ambulance current={current} />
-				<Guitar current={current} />
-				<Tenis current={current} />
-				<Bulldozer current={current} />
-				<Bicycle current={current} />
-				<Computer current={current} />
+				{Object.entries(Models).map(([id, props])=>
+					<CustomModel 
+						key={id} 
+						id={id} 
+						{...props} 
+						current={current} 
+						isChanging={isChanging} />
+				)}
 			</group>
 		</>
 	)
 }
 
 
-const views = {
-	0: {
-		z: 50,
-		angle: 135,
-		sx: 0,
-		sz: 0
-	},
-	1: {
-		z: 80,
-		angle: 150,
-		sx: -4,
-		sz: -4
-	},
-	2: {
-		z: 80,
-		angle: 90,
-		sx: 2,
-		sz: -4
-	},
-	3: {
-		z: 80,
-		angle: 150,
-		sx: -4,
-		sz: -4
-	},
-	4: {
-		z: 80,
-		angle: 150,
-		sx: -4,
-		sz: -4
-	},
-	5: {
-		z: 80,
-		angle: 90,
-		sx: 2,
-		sz: -4
-	},
-	5: {
-		z: 80,
-		angle: 90,
-		sx: 2,
-		sz: -4
-	},	
-	6: {
-		z: 80,
-		angle: 150,
-		sx: -4,
-		sz: -4
-	}
-}

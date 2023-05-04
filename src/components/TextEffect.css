@@ -1,0 +1,54 @@
+
+
+.onload-div {
+    top: 0;
+    right: 0;
+    color: #fff;
+    left: 0px;
+    margin: auto;
+    height: 30px;
+    position: fixed;
+    overflow: hidden;
+    font-size: 1.5rem;
+    width: max-content;
+    font-family: 'Roboto Mono', monospace;
+    bottom: calc(var(--n) * -60px + var(--t) * 0.5 * 60px);
+}
+
+.onload-text {
+    top: 40px;
+    display: inline;
+    position: relative;
+    height: min-content;
+    transition: top 0.5s;
+    animation: animateText 0.5s calc(var(--id) * 0.05s + var(--total) * 0.05s) forwards;
+}
+
+.onload-text.reverse {
+    top: 0px;
+    animation: animateTextReverse 0.5s calc(var(--id) * 0.05s) forwards;
+}
+
+@keyframes animateText {
+    0% {
+        top: 40px;
+    }
+    60% {
+        top: -7.5px;
+    }
+    100% {
+        top: 0px;
+    }
+}
+
+@keyframes animateTextReverse {
+    0% {
+        top: 0px;
+    }
+    40% {
+        top: -7.5px;
+    }
+    100% {
+        top: 30px;
+    }
+}
