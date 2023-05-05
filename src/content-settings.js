@@ -3,7 +3,7 @@
 let TextContent = {
 	0: '',
 	1: 'I was born in San Andres on june the 21st in the year 1992, My parents were living there.',
-	2: 'Since I was a child I always love playing the guitar, my first guitar was given to me when I was 8; it was a fender stratocaster.',
+	2: 'Since I was a child I always loved playing the guitar, my first guitar was given to me when I was 8; it was a fender stratocaster.',
 	3: 'My favourite sport was always tennis, as a result, I started playing tennis by the year of 2004 and reached a competitive level, which lead me to play in municipal tournaments.',
 	4: 'I finished my elementary studies when I was 16, afterwards, I decided to continue my studies looking for a civil engineering degree. I enrolled the program at the Universidad De Medellin.',
 	5: 'Then, I discovered one of my biggest passions, cyling. At first, it was my primary trasportation means, however, it quickly became a hobbie that led to lots of happiness.',
