@@ -4,7 +4,6 @@
 	user-select: none;
 	padding: 0;
 	margin: 0;
-	color: #000;
 	box-sizing: border-box;
 	font-family: 'Roboto Mono', monospace;
 }
@@ -86,7 +85,7 @@ body,
 	text-align: center;
 	margin: auto;
 	bottom: 50px;
-	/*color: #fff;*/
+	color: #fff;
 	font-size: 1.2rem;
 	opacity: 0;
 	transition: opacity 2s;
