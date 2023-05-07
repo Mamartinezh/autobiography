@@ -6,6 +6,7 @@
 	margin: 0;
 	box-sizing: border-box;
 	font-family: 'Roboto Mono', monospace;
+	font-family: 'Indie Flower', cursive;
 }
 
 body,
@@ -53,7 +54,7 @@ body,
 }
 
 .text-content p {
-	color: #000;
+	color: #fff;
 	font-weight: 900;
 	font-size: 1.8rem;
 	position: absolute;
@@ -79,17 +80,40 @@ body,
 }
 
 .click-hint {
-	position: fixed;
-	right: 0;
-	left: 0;
-	text-align: center;
-	margin: auto;
+	position: absolute;
 	bottom: 50px;
 	color: #fff;
 	font-size: 1.2rem;
 	opacity: 0;
 	transition: opacity 2s;
+	width: 100%;
+	text-align: center;
+	overflow: visible;
 }
+
+.click-hint p {
+	position: absolute;
+	bottom: 50px;
+	margin: auto;
+	width: max-content;
+}
+
+.click-hint p:first-child {
+	right: 50%;
+	left: 0;
+}
+
+.click-hint p:nth-child(2) {
+	right: 0;
+	left: 50%;
+}
+
+.click-hint i {
+	position: relative;
+	text-align: center;
+	font-size: 1.7rem;
+}
+
 
 .hide {
 	opacity: 0;
@@ -150,7 +174,8 @@ body,
 	}
 
 	.blob svg {
-		transform: scale(60%);
+		transform: scale(55%);
+		opacity: 0.5;
 	}
 
 	.text-content p {

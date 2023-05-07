@@ -7,16 +7,19 @@
     left: 0px;
     margin: auto;
     height: 30px;
+    height: 3rem;
     position: fixed;
     overflow: hidden;
     font-size: 1.5rem;
+    line-height: 3rem;
+    --offset: 3rem;
     width: max-content;
     font-family: 'Roboto Mono', monospace;
     bottom: calc(var(--n) * -60px + var(--t) * 0.5 * 60px);
 }
 
 .onload-text {
-    top: 40px;
+    top: 3rem;
     display: inline;
     position: relative;
     height: min-content;
@@ -31,7 +34,7 @@
 
 @keyframes animateText {
     0% {
-        top: 40px;
+        top: var(--offset);
     }
     60% {
         top: -7.5px;
@@ -49,6 +52,19 @@
         top: -7.5px;
     }
     100% {
-        top: 30px;
+        top: var(--offset);
+    }
+}
+
+@media only screen and (min-width: 850px) {
+    .onload-div {
+        height: 4rem;
+        font-size: 2rem;
+        line-height: 4rem;
+        --offset: 4rem;
+    }
+
+    .onload-text {
+        top:  4rem;
     }
 }

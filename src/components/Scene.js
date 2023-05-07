@@ -1,28 +1,33 @@
 
 import gsap from 'gsap'
 import { useFrame, useThree, extend } from '@react-three/fiber'
-import { useClientContext } from '../contexts/client/ClientState'
 import { useGLTF, useTexture, useAnimations } from '@react-three/drei'
 import { useRef, useEffect, useState, Suspense, primitive, useMemo } from 'react'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { MeshBasicMaterial, LoopOnce, SRGBColorSpace, DoubleSide, Group, CanvasTexture } from 'three'
 
+
 import CustomModel from './CustomModel'
 import MatrixCanvas from '../utils/matrix-canvas'
 import { views, viewsSmall, models } from '../content-settings'
+import { useSceneContext } from '../contexts/scene/SceneState'
+import { useClientContext } from '../contexts/client/ClientState'
 
 extend({ OrbitControls })
 
 let Models = models
 
-
-export default function Scene({onLoad, current, isChanging}) {
+export default function Scene({onLoad}) {
 
 	const control = useRef()
 	const sceneY0 = useRef(-5)
 	const elapsed = useRef(0)
 	const mainGroup = useRef()
+	const fitZoom = useRef(null)
+	const baseZoom = useRef(80)
 	const { camera, gl } = useThree()
+
+	const { current, isChanging } = useSceneContext()
 	const { cursor, cursorSettings, sizes } = useClientContext()
 
 	useFrame((state, delta)=>{
@@ -56,8 +61,8 @@ export default function Scene({onLoad, current, isChanging}) {
 
 		Models = {
 			...Models,
-			6: {
-				...Models[6],
+			7: {
+				...Models[7],
 				materials: {
 					'Screen': matrixMaterial
 				}
@@ -68,7 +73,7 @@ export default function Scene({onLoad, current, isChanging}) {
 
 	const [ bakedMap ] = useTexture(
 		[
-		'./textures/islandColor.png'
+		'./textures/landColor.png'
 		],
 		([...maps])=>{
 			maps.forEach((map, id)=>{
@@ -79,7 +84,8 @@ export default function Scene({onLoad, current, isChanging}) {
 		}
 	)
 
-	const land = useGLTF('./models/scene/land.glb')
+	const land = useGLTF('./models/scene/land-v1.glb')
+	const hull = useGLTF('./models/scene/shadowHull.glb')
 	const animations = useAnimations(land.animations, land.scene)
 
 	useEffect(()=>{
@@ -104,26 +110,34 @@ export default function Scene({onLoad, current, isChanging}) {
 			zoomV = (sizes.current.height) / 12.6357
 		}
 		zoom = zoomH?zoomV?zoomH<zoomV?zoomH:zoomV:zoomH:zoomV?zoomV:null
-		if (!zoom) return
+		if (!zoom) return fitZoom.current = null
 		camera.zoom = zoom
+		fitZoom.current = zoom
 		let factor = sizes.current.height / (sizes.current.height - 210) 
-		if (sizes.current.width>1100) sceneY0.current = -4
+		if (sizes.current.width>850) sceneY0.current = -4
 		else sceneY0.current = -3
 		// sceneY0.current = - 300 * 0.5 * factor * 12.6357 / (sizes.current.height * 16 / Math.sqrt(16**2+2**2))
 		camera.updateProjectionMatrix()
+		setView()
 	}, [sizes.current])
 
 	useEffect(()=>{
+		setView()
+	}, [current])
+
+	const setView = () => {
+		let view = views[Object.keys(views).reduceRight((a,b)=>
+			b>sizes.current.width?b:a,0)]
 		gsap.to(camera, {
 			duration: 2, 
-			'zoom': views[current].z, 
+			'zoom': (fitZoom.current??baseZoom.current) * view[current].z, 
 			ease: 'power2.inOut',
 			onUpdate: ()=> camera.updateProjectionMatrix()
 		})
 		gsap.to(camera.position, {
-			x: 16 * Math.sin(views[current].angle * Math.PI / 180),
+			x: 16 * Math.sin(view[current].angle * Math.PI / 180),
 			y: 2 + 0.5,
-			z: 16 * Math.cos(views[current].angle * Math.PI / 180),
+			z: 16 * Math.cos(view[current].angle * Math.PI / 180),
 			duration: 2, 
 			ease: 'power2.inOut'
 		})
@@ -135,13 +149,12 @@ export default function Scene({onLoad, current, isChanging}) {
 			ease: 'power2.inOut'
 		})
 		gsap.to(mainGroup.current.position, {
-				x: sizes.current.width>1100?views[current].sx:viewsSmall[current].sx,
-				z: sizes.current.width>1100?views[current].sz:viewsSmall[current].sz,
+				x: view[current].sx,
+				z: view[current].sz,
 				duration: 2, 
 				ease: 'power2.inOut'
-		})
-	}, [current])
-
+		})		
+	}
 
 	return (
 		<>
@@ -151,12 +164,7 @@ export default function Scene({onLoad, current, isChanging}) {
 					<primitive object={land.scene} />
 				</Suspense>
 				{Object.entries(Models).map(([id, props])=>
-					<CustomModel 
-						key={id} 
-						id={id} 
-						{...props} 
-						current={current} 
-						isChanging={isChanging} />
+					<CustomModel key={id} {...props} isActive={current==id} hull={hull.scene.children[0]} />
 				)}
 			</group>
 		</>

@@ -8,16 +8,14 @@ import TextEffect from './components/TextEffect'
 import LoadingCube from './components/LoadingCube'
 import { NoToneMapping, LinearEncoding, sRGBEncoding } from 'three'
 import { TextContent, views } from './content-settings'
+import { useSceneContext } from './contexts/scene/SceneState'
 
 export default function App() {
 
-	const isChanging = useRef(false)
 	const [ isLoaded, setIsLoaded ] = useState(false)
 	const [ showHint, setShowHint ] = useState(false)
 	const [ hideText, setHideText ] = useState(false)
-	const [ hasClicked, setHasCliked ] = useState(false)
-	const [ currentScene, setCurrentScene ] = useState(0)
-	const [ nViews, setNViews ] = useState(Object.keys(views).length)
+	const { canChange, current, setCurrent } = useSceneContext()
 	const [ onLoadText, setOnLoadText ] = useState('¡Welcome to my autobiography!')
 
 	const showText = () => {
@@ -31,22 +29,11 @@ export default function App() {
 	const hideWelcomeText = () => {
 		setHideText(true)
 		setShowHint(false)
-		setCurrentScene(1)
+		setCurrent(1)
 		removeEventListener('click', hideWelcomeText)
 		setTimeout(()=>{
-			addEventListener('click', e=>changeScene(e, 1))
-			addEventListener('contextmenu', e=>changeScene(e, -1))
-			setHasCliked(true)
+			canChange.current = true
 		}, onLoadText.length * 0.05 * 1000)
-	}
-
-	const changeScene = (e, dt) => {
-		e.preventDefault()
-		if (isChanging.current) return
-		setCurrentScene(prev=>{
-			if (prev + dt >= nViews || prev + dt < 0) return prev
-			return prev + dt
-		})
 	}
 
 	return (
@@ -69,30 +56,27 @@ export default function App() {
 					]
 				}}
 			>	
-				<Scene 
-					onLoad={showText} 
-					current={currentScene} 
-					isChanging={isChanging} />
+				<Scene onLoad={showText} />
 			</Canvas>
 		</div>
 		<LoadingCube isLoaded={isLoaded} />
 		{isLoaded && 
-			<TextEffect text={onLoadText} hide={hideText}/>
+			<TextEffect text={onLoadText} hide={hideText&&current>0}/>
 		}
 		<div className={`click-hint ${showHint?'active':''}`}>
-			Click to continue
+			<p>forwards<br/>left click/touch</p>
+			<p>backwards<br/>right click/2s touch</p>
+			<i className="fa-solid fa-computer-mouse"></i>
 		</div>
 		<div
-			className={`text-content ${hasClicked?'':'hide'}`}>
-			{currentScene>0 &&
+			className={`text-content ${current>0?'':'hide'}`}>
 				<>
 				<Blob />
 				<Blob />
 				{Object.entries(TextContent).map(([key, text])=>
-					<p key={key} className={`${currentScene==key?'':'hide'}`}>{text}</p>
+					<p key={key} className={`${current==key?'':'hide'}`}>{text}</p>
 				)}
 				</>
-			}
 		</div>
 		</>
 	)
