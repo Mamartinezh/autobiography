@@ -18,7 +18,6 @@ export default function Blob() {
 		  				attributeName='fill'
 		  				dur='150000ms'
 		  				repeatCount='indefinite'
-		  				// values='#FA4D56;#FF0066;#8A3FFC;#F1C21B;#08BDBA;#0F62FE;#A7F0BA;#24A148;#9EF0F0;#BAE6FF;#D0E2FF;#E8DAFF;#FFD6E8;#FA4D56'
 		  				values='#FF0066;#08BDBA;#8A3FFC;#FA4D56;#0F62FE;#24A148;#FF0066'
 		  			>
 		  			</animate>

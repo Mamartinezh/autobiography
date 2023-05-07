@@ -73,7 +73,7 @@ export default function Scene({onLoad}) {
 
 	const [ bakedMap ] = useTexture(
 		[
-		'./textures/landColor.png'
+		'./textures/landColor-compress.png'
 		],
 		([...maps])=>{
 			maps.forEach((map, id)=>{
@@ -84,7 +84,7 @@ export default function Scene({onLoad}) {
 		}
 	)
 
-	const land = useGLTF('./models/scene/land-v1.glb')
+	const land = useGLTF('./models/scene/land.glb')
 	const hull = useGLTF('./models/scene/shadowHull.glb')
 	const animations = useAnimations(land.animations, land.scene)
 
