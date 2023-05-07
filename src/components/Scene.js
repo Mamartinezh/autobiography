@@ -73,7 +73,7 @@ export default function Scene({onLoad}) {
 
 	const [ bakedMap ] = useTexture(
 		[
-		'./textures/landColor-compress.png'
+		'./textures/landColor.png'
 		],
 		([...maps])=>{
 			maps.forEach((map, id)=>{
