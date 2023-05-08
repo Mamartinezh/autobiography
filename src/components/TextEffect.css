@@ -24,7 +24,7 @@
     position: relative;
     height: min-content;
     transition: top 0.5s;
-    animation: animateText 0.5s calc(var(--id) * 0.05s + var(--total) * 0.05s) forwards;
+    animation: animateText 0.5s calc(var(--id) * 0.05s + var(--total) * 0.05s + var(--n) * 0.3s) forwards;
 }
 
 .onload-text.reverse {

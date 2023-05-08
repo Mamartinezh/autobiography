@@ -16,7 +16,7 @@ export default function App() {
 	const [ showHint, setShowHint ] = useState(false)
 	const [ hideText, setHideText ] = useState(false)
 	const { canChange, current, setCurrent } = useSceneContext()
-	const [ onLoadText, setOnLoadText ] = useState('¡Welcome to my autobiography!')
+	const [ onLoadText, setOnLoadText ] = useState("¡Welcome to my autobiography!-I'm Mateo Martinez Herrera-Creative Developer")
 
 	const showText = () => {
 		setIsLoaded(true)

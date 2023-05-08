@@ -6,7 +6,7 @@ let TextContent = {
 	2: 'Since I was a child I always loved playing the guitar, my first guitar was given to me when I was 8; it was a fender stratocaster.',
 	3: 'My favourite sport was always tennis, as a result, I started playing tennis by the year of 2004 and reached a competitive level, which led me to play in municipal tournaments.',
 	4: 'I finished my elementary studies when I was 16, afterwards, I decided to continue my studies looking for a civil engineering degree. I enrolled the program at the Universidad De Medellin.',
-	5: 'While I was at university I got my first dog, Paul, a siberian husky that will became one of the most important beings of my life; later He would meet his two siblings, Kayra and Pirulo.',
+	5: 'While I was in college I got my first dog, Paul, a siberian husky that will became one of the most important beings of my life; later He would meet his two siblings, Kayra and Pirulo.',
 	6: 'Then, I discovered one of my biggest passions, cyling. At first, it was my primary mean of transportation, however, it quickly became a hobbie that led to lots of happiness.',
 	7: "Recently, I've been very enthusiastic about programming, althought it was always one of my passions."
 }
