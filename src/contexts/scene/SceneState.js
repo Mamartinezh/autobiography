@@ -33,7 +33,7 @@ export default function SceneState({children}) {
 	const canChange = useRef(false)
 	const isChanging = useRef(false)
 	const [ current, setCurrent ] = useState(0)
-	const [ nViews, setNViews ] = useState(Object.keys(models).length + 1)
+	const [ nViews, setNViews ] = useState(Object.keys(models).length + 2)
 
 	useEffect(()=>{
 		addEventListener('click', e=>changeScene(e, 1))
@@ -53,6 +53,7 @@ export default function SceneState({children}) {
 
 	return (	
 		<SceneContext.Provider value={{
+			nViews,
 			current,
 			canChange,
 			setCurrent,

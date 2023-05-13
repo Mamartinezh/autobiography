@@ -15,7 +15,7 @@ export default function App() {
 	const [ isLoaded, setIsLoaded ] = useState(false)
 	const [ showHint, setShowHint ] = useState(false)
 	const [ hideText, setHideText ] = useState(false)
-	const { canChange, current, setCurrent } = useSceneContext()
+	const { canChange, current, setCurrent, nViews } = useSceneContext()
 	const [ onLoadText, setOnLoadText ] = useState("¡Welcome to my autobiography!-I'm Mateo Martinez Herrera-Creative Developer")
 
 	const showText = () => {
@@ -63,13 +63,16 @@ export default function App() {
 		{isLoaded && 
 			<TextEffect text={onLoadText} hide={hideText&&current>0}/>
 		}
+		{isLoaded&&
+			<TextEffect text='The End' hide={current<nViews-1}/>
+		}
 		<div className={`click-hint ${showHint?'active':''}`}>
 			<p>forwards<br/>left click/touch</p>
 			<p>backwards<br/>right click/2s touch</p>
 			<i className="fa-solid fa-computer-mouse"></i>
 		</div>
 		<div
-			className={`text-content ${current>0?'':'hide'}`}>
+			className={`text-content ${(current>0&&current<nViews-1)?'':'hide'}`}>
 				<>
 				<Blob />
 				<Blob />
