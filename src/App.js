@@ -63,7 +63,7 @@ export default function App() {
 		{isLoaded && 
 			<TextEffect text={onLoadText} hide={hideText&&current>0}/>
 		}
-		{isLoaded&&
+		{(isLoaded&&current==nViews-1) &&
 			<TextEffect text='The End' hide={current<nViews-1}/>
 		}
 		<div className={`click-hint ${showHint?'active':''}`}>
